@@ -42,7 +42,7 @@ aviao::leia(bool arquivo) {
 }
 
 aviao::printa() {
-    cout << "-----------------------------------------------------------------------" << endl;
+    cout << "--------------------------------------------------------------------------" << endl;
     cout << "Identificação do avião: " << nome << endl;
     cout << "O avião deseja " << (pousar ? "pousar." : "decolar.") << endl; 
     cout << (pousar ? "Combustível restante: " : "Tempo estimado de voo: ") << (pousar ? combustivel:tempoEstimado) << endl;
@@ -73,13 +73,14 @@ class Queue {
 			aviao *comecoDaFila();
 			aviao *fimDaFila();
 			bool filaVazia();
+			void printaFila();
 };
 
 Queue::Queue(): cabeca(new celula[1]), fim(cabeca) {
 	cabeca->conteudo = nullptr;
 	cabeca->proximo = nullptr;
 	cabeca->anterior = nullptr;
-};
+}
 
 Queue::~Queue() {
 	celula *aux;
@@ -128,5 +129,15 @@ aviao *Queue::fimDafila() {
 
 bool Queue::filaVazia() {
 	return (cabeca == fim);
+}
+
+void Queue::printaFila() {
+	aviao *aux;
+
+	for (aux = cabeca->proximo; aux != nullptr; aux = aux->proximo)
+		*aux.printa();
+
+    cout << "--------------------------------------------------------------------------" << endl;
+
 }
 #endif
