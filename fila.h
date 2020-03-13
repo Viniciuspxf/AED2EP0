@@ -16,7 +16,7 @@ class aviao {
         void printa();
 };
 
-aviao::leia(bool arquivo) {
+void aviao::leia(bool arquivo) {
     if (arquivo) {
 
     }
@@ -41,7 +41,7 @@ aviao::leia(bool arquivo) {
     }
 }
 
-aviao::printa() {
+void aviao::printa() {
     cout << "--------------------------------------------------------------------------" << endl;
     cout << "Identificação do avião: " << nome << endl;
     cout << "O avião deseja " << (pousar ? "pousar." : "decolar.") << endl; 
@@ -51,15 +51,17 @@ aviao::printa() {
     
 }
 
+typedef struct Celula celula;
+	struct Celula {
+		aviao *conteudo;
+		celula *proximo;
+		celula *anterior;
+	};
+
 class Queue {
   	private:
 
-			typedef struct Celula celula;
-			struct Celula {
-				aviao *conteudo;
-				celula *proximo;
-				celula *anterior;
-			};
+			
 
 			celula *cabeca;
 			celula *fim;
@@ -69,6 +71,7 @@ class Queue {
 			Queue();
 			~Queue();
 			void insere(aviao *objeto);
+			void insereNoFim(aviao *objeto);
 			aviao *retira();
 			aviao *comecoDaFila();
 			aviao *fimDaFila();
@@ -94,11 +97,24 @@ void Queue::insere(aviao *objeto) {
 	celula *aux, *novo;
 	novo = new celula[1];
 	novo->conteudo = objeto;
+	if (filaVazia()) fim = novo;
+	
 	aux = cabeca->proximo;
 	aux->anterior = novo;
-	objeto->proximo = aux;
+	novo->proximo = aux;
 	cabeca->proximo = novo;
-	if (filaVazia()) fim = novo;
+	novo->anterior = cabeca;
+}
+
+void Queue::insereNoFim(aviao *objeto) {
+	celula *aux, *novo;
+	novo = new celula[1];
+	novo->conteudo = objeto;
+	aux = fim;
+	fim = novo;
+	aux->proximo = novo;
+	novo->anterior = aux;
+	novo->proximo = nullptr;
 }
 
 aviao *Queue::retira() {
@@ -123,7 +139,7 @@ aviao *Queue::comecoDaFila() {
 	else return cabeca->proximo->conteudo;
 }
 
-aviao *Queue::fimDafila() {
+aviao *Queue::fimDaFila() {
 	return fim->conteudo;
 }
 
@@ -132,10 +148,10 @@ bool Queue::filaVazia() {
 }
 
 void Queue::printaFila() {
-	aviao *aux;
+	celula *aux;
 
 	for (aux = cabeca->proximo; aux != nullptr; aux = aux->proximo)
-		*aux.printa();
+		aux->conteudo->printa();
 
     cout << "--------------------------------------------------------------------------" << endl;
 
