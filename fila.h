@@ -12,11 +12,12 @@ class aviao {
         string origemDestino; //usar union????
         int combustivel; //juntar combustivel e tempoestimado ????
         int tempoEstimado;
-        void leia(bool arquivo);
+		int instante;
+        void leia(bool arquivo, int instante);
         void printa();
 };
 
-void aviao::leia(bool arquivo) {
+void aviao::leia(bool arquivo, int instante) {
     if (arquivo) {
 
     }
@@ -74,7 +75,7 @@ class Queue {
 		aviao *fimDaFila();
 		bool filaVazia();
 		void printaFila();
-		Queue detectaExcecoes(Queue urgencia);
+		Queue detectaExcecoes(Queue urgencia, int instante);
 };
 
 Queue::Queue(): cabeca(new celula[1]), fim(cabeca) {
@@ -155,6 +156,30 @@ void Queue::printaFila() {
 
 }
 
-Queue Queue::detectaExcecoes(Queue urgencia) {
+Queue Queue::detectaExcecoes(Queue urgencia, int instante) {
+	celula *atual, *aux;
+	aviao *objeto;
+	int tempo;
+	if (!filaVazia()) {
+		for (atual = fim; atual != cabeca; atual = atual->anterior) {
+			objeto = atual->conteudo;
+			tempo = instante - objeto->instante;
+			if (!objeto->pousar && ((double)tempo)/objeto->tempoEstimado > 0.1) {
+				aux = atual->proximo;
+				atual->anterior->proximo = aux;
+				if (atual->proximo != nullptr) atual->proximo->anterior = atual->anterior;
+				urgencia.insere(objeto);
+				delete [] atual;
+			}
+			else if (objeto->pousar && objeto->combustivel - tempo < 2){
+				aux = atual->proximo;
+				atual->anterior->proximo = aux;
+				if (atual->proximo != nullptr) atual->proximo->anterior = atual->anterior;
+				urgencia.insere(objeto);
+				delete [] atual;
+			}
+		}
+	}
+	return urgencia;
 }
 #endif

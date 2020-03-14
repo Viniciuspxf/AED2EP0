@@ -18,11 +18,11 @@ int main() {
         }
         for (j = 0; j < n; j++) {
             aviao *objeto = new aviao[1];
-            objeto->leia(arquivo);
+            objeto->leia(arquivo, i);
             if (objeto->emergencia) urgencia.insere(objeto);
             else fila.insere(objeto);
         }
-        urgencia = fila.detectaExcecoes(urgencia);
+        urgencia = fila.detectaExcecoes(urgencia, i);
         
     }
     return 0;
