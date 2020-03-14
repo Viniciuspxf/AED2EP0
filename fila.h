@@ -157,27 +157,34 @@ void Queue::printaFila() {
 }
 
 Queue Queue::detectaExcecoes(Queue urgencia, int instante) {
-	celula *atual, *aux;
+	celula *atual, *aux, *aux2;
 	aviao *objeto;
 	int tempo;
 	if (!filaVazia()) {
-		for (atual = fim; atual != cabeca; atual = atual->anterior) {
+		for (atual = fim; atual != cabeca;) {
 			objeto = atual->conteudo;
 			tempo = instante - objeto->instante;
 			if (!objeto->pousar && ((double)tempo)/objeto->tempoEstimado > 0.1) {
 				aux = atual->proximo;
 				atual->anterior->proximo = aux;
+				aux2  = atual->anterior;
 				if (atual->proximo != nullptr) atual->proximo->anterior = atual->anterior;
+				else fim = aux2;
 				urgencia.insere(objeto);
 				delete [] atual;
+				atual = aux2;
 			}
 			else if (objeto->pousar && objeto->combustivel - tempo < 2){
 				aux = atual->proximo;
 				atual->anterior->proximo = aux;
+				aux2  = atual->anterior;
 				if (atual->proximo != nullptr) atual->proximo->anterior = atual->anterior;
+				else fim = aux2;
 				urgencia.insere(objeto);
 				delete [] atual;
+				atual = aux2;
 			}
+			else atual = atual->anterior;
 		}
 	}
 	return urgencia;
