@@ -60,23 +60,21 @@ typedef struct Celula celula;
 
 class Queue {
   	private:
-
-			
-
 			celula *cabeca;
 			celula *fim;
 		
-		public:
+	public:
 
-			Queue();
-			~Queue();
-			void insere(aviao *objeto);
-			void insereNoFim(aviao *objeto);
-			aviao *retira();
-			aviao *comecoDaFila();
-			aviao *fimDaFila();
-			bool filaVazia();
-			void printaFila();
+		Queue();
+		~Queue();
+		void insere(aviao *objeto);
+		void insereNoFim(aviao *objeto);
+		aviao *retira();
+		aviao *comecoDaFila();
+		aviao *fimDaFila();
+		bool filaVazia();
+		void printaFila();
+		Queue detectaExcecoes(Queue urgencia);
 };
 
 Queue::Queue(): cabeca(new celula[1]), fim(cabeca) {
@@ -155,5 +153,8 @@ void Queue::printaFila() {
 
     cout << "--------------------------------------------------------------------------" << endl;
 
+}
+
+Queue Queue::detectaExcecoes(Queue urgencia) {
 }
 #endif
