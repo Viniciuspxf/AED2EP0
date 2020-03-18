@@ -222,7 +222,10 @@ void aloca(int modo, Queue fila, Queue auxiliar, int pistas[3]) {
             if (l == 2) {
                 if (modo == 0 && pistas[l] == 0) pousaAviao(fila.retira(), l, pistas);
                 else if (modo != 2) desviaAviao(fila.retira());
-                else /*código para voltar ou parar a iteração*/;
+                else {
+                    if (pistas[2] == 0) auxiliar.insereNoFim(fila.retira());
+                    else break;
+                }
             }
         }
         else {
@@ -231,24 +234,29 @@ void aloca(int modo, Queue fila, Queue auxiliar, int pistas[3]) {
                     decolaAviao(fila.retira(), l, pistas);
                     break;
                 }
-                if (l == -1) {
-                    if (modo == 2) break /*código para parar iteração*/;
-                    else /*código para voltar para fila*/;
+            }
+            if (l == -1) {
+                if (modo == 2) break /*código para parar iteração*/;
+                else {
+                    auxiliar.insereNoFim(fila.retira());
                 }
             }
         }
     }
+    while (!auxiliar.filaVazia()) fila.insereNoFim(auxiliar.retira());
+    
 }
 
 int main() {
     Queue fila, urgencia, emergencia, auxiliar;
     aviao *objeto;
-    int i, j, l, pista[3] = {0,0,0}, n; 
+    int i, j, pista[3] = {0,0,0}, n; 
     bool arquivo;
     cout << "Digite 1 se deseja que o input seja um arquivo. Digite 0 caso contrário: ";
     cin >> arquivo;
     if (arquivo) {}
     for (i = 0; i < NUMERODESIMULACOES; i++) {
+        for (j = 0; j < 3; j++) if (pista[j] != 0) pista[j]--; 
         if (arquivo) {}
         else {
             cout << "Digite o número de aviões: ";
@@ -261,6 +269,9 @@ int main() {
             else fila.insere(objeto);
         }
         urgencia = fila.detectaExcecoes(urgencia, i);
+        aloca(0, emergencia, auxiliar, pista);
+        aloca(1, urgencia, auxiliar, pista);
+        aloca(2, fila, auxiliar, pista);
         
     }
     return 0;
@@ -275,3 +286,16 @@ solução: criar uma fila SÓ para emergências.
 */
 //Tratar caso pousar, todas as pistas cheias exceto a terceira, com decolar atrás
 //usar fila auxiliar
+
+//urgência não é sinônimo de emergência
+
+
+/* 
+Que aviões estão esperando para pousar e decolar / depois da alocação
+O tempo médio de espera para o pouso/ antes da alocação
+O tempo médio de espera para decolagem / antes da alocação
+a quantidade média de combustível dos aviões esperando para pousar / depois da alocação
+a quantidade média de combustível disponível dos aviões que pousaram / durante a alocação
+a quantidade de aviões pousando/decolando em condições de emergência /durante a alocação
+
+*/
