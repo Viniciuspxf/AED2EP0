@@ -8,7 +8,7 @@ class aviao {
         string nome;
         bool pousar;
         bool emergencia;
-        string origemDestino; //usar union????
+        string origemDestino;
         int combustivel; //juntar combustivel e tempoestimado ????
         int tempoEstimado;
 		int instante;
@@ -390,10 +390,11 @@ int main() {
         urgencia->obtemCombustivel(dados);
         fila->obtemCombustivel(dados);
 
-        fila->printaFilaDebugger();
-        urgencia->printaFilaDebugger();
-        emergencia->printaFilaDebugger();
+        fila->printaFila();
+        urgencia->printaFila();
+        emergencia->printaFila();
         
+        cout << "Quantidade média de combustível disponível dos aviões esperando pousar: " << ((double)dados->somaCombustiveis)/dados->numeroDeAvioesPousando << endl;
 
         emergencia->atualizaCombustivel();
         urgencia->atualizaCombustivel();
