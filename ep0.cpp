@@ -16,6 +16,21 @@ class aviao {
         void printa();
 };
 
+
+class informacoes {
+    public:
+        void zera();
+        int tempoAtual;
+        int decolandoEmergencia;
+        int pousandoEmergencia;
+        int somaCombustiveis;
+        int numeroDeAvioesPousando;
+        int numeroDeAvioesDecolando;
+        int esperaPouso;
+        int esperaDecolagem;
+};
+
+
 void aviao::leia(bool arquivo, int instante) {
     if (arquivo) {
 
@@ -75,6 +90,9 @@ class Queue {
 		bool filaVazia();
 		void printaFila();
 		Queue detectaExcecoes(Queue urgencia, int instante);
+        void obtemTempo(int instanteAtual, informacoes *dados);
+        void obtemCombustivel(informacoes *dados);
+        void atualizaCombustivel();
 };
 
 Queue::Queue(): cabeca(new celula[1]), fim(cabeca) {
@@ -189,19 +207,43 @@ Queue Queue::detectaExcecoes(Queue urgencia, int instante) {
 	return urgencia;
 }
 
+void Queue::obtemTempo(int instanteAtual, informacoes *dados) {
+    celula *aux;
+    aviao *objeto;
+    for (aux = cabeca->proximo; aux != nullptr; aux = aux->proximo) {
+        objeto = aux->conteudo;
+        if (objeto->pousar) {
+            dados->numeroDeAvioesPousando++;
+            dados->esperaPouso = dados->esperaPouso + instanteAtual - objeto->instante;
+        }
+        else {
+            dados->numeroDeAvioesDecolando++;
+            dados->esperaDecolagem = dados->esperaDecolagem + instanteAtual - objeto->instante;
+        }
+    
+    }
 
-class informacoes {
-    public:
-        void zera();
-        int tempoAtual;
-        int decolandoEmergencia;
-        int pousandoEmergencia;
-        int somaCombustiveis;
-        int numeroDeAvioesPousando;
-        int numeroDeAvioesDecolando;
-        int esperaPouso;
-        int esperaDecolagem;
-};
+}
+
+void Queue::obtemCombustivel(informacoes *dados) {
+    celula *aux;
+    aviao *objeto;
+    for (aux = cabeca->proximo; aux != nullptr; aux = aux->proximo) {
+        objeto = aux->conteudo;
+        if (objeto->pousar) {
+            dados->numeroDeAvioesPousando++;
+            dados->somaCombustiveis = dados->somaCombustiveis + objeto->combustivel;
+        }
+    }
+}
+
+void Queue::atualizaCombustivel() {
+    celula *aux;
+    for (aux = cabeca->proximo; aux != nullptr; aux = aux->proximo) {
+        aux->conteudo->combustivel--;
+    }
+}
+
 
 void informacoes::zera(){
     decolandoEmergencia = 0; //durante
