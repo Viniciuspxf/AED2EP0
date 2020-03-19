@@ -6,7 +6,7 @@ Queue::Queue(): cabeca(new celula[1]), fim(cabeca) {
 	cabeca->conteudo = nullptr;
 	cabeca->proximo = nullptr;
 	cabeca->anterior = nullptr;
-}
+};
 
 Queue::~Queue() {
 	celula *aux;
@@ -20,10 +20,9 @@ void Queue::insere(aviao *objeto) {
 	celula *aux, *novo;
 	novo = new celula[1];
 	novo->conteudo = objeto;
-	if (filaVazia()) fim = novo;
-	
 	aux = cabeca->proximo;
-	aux->anterior = novo;
+	if (filaVazia()) fim = novo;
+	else aux->anterior = novo;
 	novo->proximo = aux;
 	cabeca->proximo = novo;
 	novo->anterior = cabeca;

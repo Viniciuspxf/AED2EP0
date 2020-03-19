@@ -10,9 +10,9 @@ int main(){
     informacoes *dados;
     aviao *objeto;
     int escolhaDaFuncao = -1, Fila, instante, a, b, modo, pistas[3] = {0,0,0};
+    fila[0] = new Queue[1];
     fila[1] = new Queue[1];
     fila[2] = new Queue[1];
-    fila[3] = new Queue[1];
     dados = new informacoes[1];
     objeto = new aviao[1];
 
@@ -106,9 +106,9 @@ int main(){
         }
     }  
 
+    delete [] fila[0];
     delete [] fila[1];
     delete [] fila[2];
-    delete [] fila[3];
     delete [] dados;
     delete [] objeto;
 }
