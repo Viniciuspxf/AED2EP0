@@ -189,38 +189,66 @@ Queue Queue::detectaExcecoes(Queue urgencia, int instante) {
 	return urgencia;
 }
 
+
+class informacoes {
+    public:
+        void zera();
+        int tempoAtual;
+        int decolandoEmergencia;
+        int pousandoEmergencia;
+        int somaCombustiveis;
+        int numeroDeAvioesPousando;
+        int numeroDeAvioesDecolando;
+        int esperaPouso;
+        int esperaDecolagem;
+};
+
+void informacoes::zera(){
+    decolandoEmergencia = 0; //durante
+    pousandoEmergencia = 0; //durante
+    somaCombustiveis = 0; //durante e depois
+    numeroDeAvioesPousando = 0; //antes, durante e depois
+    numeroDeAvioesDecolando = 0; //antes
+    esperaPouso = 0; //antes
+    esperaDecolagem = 0; //antes;
+}
+
 void desviaAviao(aviao *objeto) {
     cout << "O seguinte avião será desviado: " << endl;
     objeto->printa();
     delete [] objeto;
 }
 
-void pousaAviao(aviao *objeto, int l, int pistas[3]){
+void pousaAviao(aviao *objeto, int l, int pistas[3], informacoes *dados){
     pistas[l] = 3;
     cout << "O seguinte avião está pousando na pista " << l + 1 << endl;
     objeto->printa();
+    dados->numeroDeAvioesPousando++;
+    dados->somaCombustiveis = dados->somaCombustiveis + objeto->combustivel;
+    if (objeto->emergencia) dados->pousandoEmergencia++;
     delete [] objeto;
 }
 
-void decolaAviao(aviao *objeto, int l, int pistas[3]) {
+void decolaAviao(aviao *objeto, int l, int pistas[3], informacoes *dados) {
     pistas[l] = 3;
     cout << "O seguinte avião está decolando na pista " << l + 1 << endl;
     objeto->printa();
+    if (objeto->emergencia) dados->decolandoEmergencia++;
     delete [] objeto;
 }
 
-void aloca(int modo, Queue fila, Queue auxiliar, int pistas[3]) {
+void aloca(int modo, Queue fila, Queue auxiliar, int pistas[3], informacoes *dados) {
     int l;
     while (!fila.filaVazia()) {
         if (fila.fimDaFila()->pousar) {
             for (l = 0; l < 2; l++) {
                 if (pistas[l] == 0) {
-                    pousaAviao(fila.retira(), l, pistas);
+                    pousaAviao(fila.retira(), l, pistas, dados);
                     break;
                 } 
             }
             if (l == 2) {
-                if (modo == 0 && pistas[l] == 0) pousaAviao(fila.retira(), l, pistas);
+                if (modo == 0 && pistas[l] == 0) pousaAviao(fila.retira(), l, pistas, dados);
                 else if (modo != 2) desviaAviao(fila.retira());
                 else {
                     if (pistas[2] == 0) auxiliar.insereNoFim(fila.retira());
@@ -231,7 +259,7 @@ void aloca(int modo, Queue fila, Queue auxiliar, int pistas[3]) {
         else {
             for (l = 2; l >= 0; l--) {
                 if (pistas[l] == 0) {
-                    decolaAviao(fila.retira(), l, pistas);
+                    decolaAviao(fila.retira(), l, pistas, dados);
                     break;
                 }
             }
@@ -250,6 +278,7 @@ void aloca(int modo, Queue fila, Queue auxiliar, int pistas[3]) {
 int main() {
     Queue fila, urgencia, emergencia, auxiliar;
     aviao *objeto;
+    informacoes *dados = new informacoes[1];
     int i, j, pista[3] = {0,0,0}, n; 
     bool arquivo;
     cout << "Digite 1 se deseja que o input seja um arquivo. Digite 0 caso contrário: ";
@@ -269,10 +298,23 @@ int main() {
             else fila.insere(objeto);
         }
         urgencia = fila.detectaExcecoes(urgencia, i);
-        aloca(0, emergencia, auxiliar, pista);
-        aloca(1, urgencia, auxiliar, pista);
-        aloca(2, fila, auxiliar, pista);
+        dados->zera();
+        emergencia.obtemTempo(i, dados);
+        urgencia.obtemTempo(i, dados);
+        fila.obtemTempo(i, dados);
+        dados->zera();
+        aloca(0, emergencia, auxiliar, pista, dados);
+        aloca(1, urgencia, auxiliar, pista, dados);
+        aloca(2, fila, auxiliar, pista, dados);
+        dados->zera();
+        emergencia.obtemCombustivel(dados);
+        urgencia.obtemCombustivel(dados);
+        fila.obtemCombustivel(dados);
         
+
+        emergencia.atualizaCombustivel();
+        urgencia.atualizaCombustivel();
+        fila.atualizaCombustivel();
     }
     return 0;
 }
@@ -290,12 +332,19 @@ solução: criar uma fila SÓ para emergências.
 //urgência não é sinônimo de emergência
 
 
-/* 
-Que aviões estão esperando para pousar e decolar / depois da alocação
-O tempo médio de espera para o pouso/ antes da alocação
-O tempo médio de espera para decolagem / antes da alocação
-a quantidade média de combustível dos aviões esperando para pousar / depois da alocação
+/*
 a quantidade média de combustível disponível dos aviões que pousaram / durante a alocação
+
 a quantidade de aviões pousando/decolando em condições de emergência /durante a alocação
 
+O tempo médio de espera para o pouso/ antes da alocação
+
+O tempo médio de espera para decolagem / antes da alocação
+
+Que aviões estão esperando para pousar e decolar / depois da alocação
+
+a quantidade média de combustível dos aviões esperando para pousar / depois da alocação
 */
+
+//mudar combustível, criar função que atualiza combustíveis, função que detecta exceções;
+//transformar tudo em ponteiro
