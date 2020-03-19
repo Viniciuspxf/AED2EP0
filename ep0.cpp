@@ -13,6 +13,7 @@ class aviao {
         int tempoEstimado;
 		int instante;
         void leia(bool arquivo, int instante);
+        void printaDebugger();
         void printa();
 };
 
@@ -57,6 +58,10 @@ void aviao::leia(bool arquivo, int instante) {
 }
 
 void aviao::printa() {
+    cout << nome << " " << origemDestino;
+}
+
+void aviao::printaDebugger() {
     cout << "--------------------------------------------------------------------------" << endl;
     cout << "Identificação do avião: " << nome << endl;
     cout << "O avião deseja " << (pousar ? "pousar." : "decolar.") << endl; 
@@ -86,7 +91,8 @@ class Queue {
 		aviao *comecoDaFila();
 		aviao *fimDaFila();
 		bool filaVazia();
-		void printaFila();
+		void printaFilaDebugger();
+        void printaFila();
 		void detectaExcecoes(Queue *urgencia, int instante);
         void obtemTempo(int instanteAtual, informacoes *dados);
         void obtemCombustivel(informacoes *dados);
@@ -161,14 +167,27 @@ bool Queue::filaVazia() {
 	return (cabeca == fim);
 }
 
-void Queue::printaFila() {
+void Queue::printaFilaDebugger() {
 	celula *aux;
 
 	for (aux = cabeca->proximo; aux != nullptr; aux = aux->proximo)
-		aux->conteudo->printa();
+		aux->conteudo->printaDebugger();
 
     cout << "--------------------------------------------------------------------------" << endl;
 
+}
+
+void Queue::printaFila() {
+    celula *aux;
+    aviao *objeto;
+    for (aux = cabeca->proximo; aux != nullptr; aux = aux->proximo) {
+        objeto = aux->conteudo;
+        cout << "Avião ";
+        objeto->printa();
+        cout << " está aguardando liberação para ";
+        if (objeto->pousar) cout << "pouso." << endl;
+        else cout << "decolagem." << endl;
+    }
 }
 
 void Queue::detectaExcecoes(Queue *urgencia, int instante) {
@@ -242,7 +261,7 @@ void Queue::atualizaCombustivel() {
 }
 
 
-void informacoes::zera(){
+void informacoes::zera() {
     decolandoEmergencia = 0; //durante
     pousandoEmergencia = 0; //durante
     somaCombustiveis = 0; //durante e depois
@@ -253,26 +272,39 @@ void informacoes::zera(){
 }
 
 void desviaAviao(aviao *objeto) {
-    cout << "O seguinte avião será desviado: " << endl;
+    cout << "Avião ";
     objeto->printa();
+    cout << " é desviado para aeroporto vizinho"; 
+    if (objeto->emergencia) cout << " (Emergência)";
+    cout << endl;
     delete [] objeto;
 }
 
 void pousaAviao(aviao *objeto, int l, int pistas[3], informacoes *dados) {
     pistas[l] = 3;
-    cout << "O seguinte avião está pousando na pista " << l + 1 << endl;
+    cout << "Avião  ";
     objeto->printa();
+    cout << "pousa na pista " << l + 1;
     dados->numeroDeAvioesPousando++;
     dados->somaCombustiveis = dados->somaCombustiveis + objeto->combustivel;
-    if (objeto->emergencia) dados->pousandoEmergencia++;
+    if (objeto->emergencia) { 
+        dados->pousandoEmergencia++;
+        cout << " (Emergência)";
+    }
+    cout << endl;
     delete [] objeto;
 }
 
 void decolaAviao(aviao *objeto, int l, int pistas[3], informacoes *dados) {
     pistas[l] = 3;
-    cout << "O seguinte avião está decolando na pista " << l + 1 << endl;
+    cout << "Avião ";
     objeto->printa();
-    if (objeto->emergencia) dados->decolandoEmergencia++;
+    cout << "decola na pista " << l + 1;
+    if (objeto->emergencia) {
+        dados->decolandoEmergencia++;
+        cout << " (Emergência)";
+    }
+    cout << endl;
     delete [] objeto;
 }
 
@@ -350,10 +382,17 @@ int main() {
         aloca(0, emergencia, auxiliar, pista, dados);
         aloca(1, urgencia, auxiliar, pista, dados);
         aloca(2, fila, auxiliar, pista, dados);
+        cout << "Quantidade média de combustível disponível dos aviões que pousaram: " << ((double)dados->somaCombustiveis)/dados->numeroDeAvioesPousando << endl;
+        cout << dados->pousandoEmergencia << " aviões pousaram em caso de emergência." << endl;
+        cout << dados->decolandoEmergencia << " aviões decolaram em caso de emergência." << endl;
         dados->zera();
         emergencia->obtemCombustivel(dados);
         urgencia->obtemCombustivel(dados);
         fila->obtemCombustivel(dados);
+
+        fila->printaFilaDebugger();
+        urgencia->printaFilaDebugger();
+        emergencia->printaFilaDebugger();
         
 
         emergencia->atualizaCombustivel();
@@ -381,14 +420,6 @@ solução: criar uma fila SÓ para emergências.
 
 
 /*
-a quantidade média de combustível disponível dos aviões que pousaram / durante a alocação
-
-a quantidade de aviões pousando/decolando em condições de emergência /durante a alocação
-
-O tempo médio de espera para o pouso/ antes da alocação
-
-O tempo médio de espera para decolagem / antes da alocação
-
 Que aviões estão esperando para pousar e decolar / depois da alocação
 
 a quantidade média de combustível dos aviões esperando para pousar / depois da alocação
