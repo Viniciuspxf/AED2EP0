@@ -67,19 +67,17 @@ void aviao::printa() {
 }
 
 typedef struct Celula celula;
-	struct Celula {
-		aviao *conteudo;
-		celula *proximo;
-		celula *anterior;
-	};
+struct Celula {
+	aviao *conteudo;
+	celula *proximo;
+	celula *anterior;
+};
 
 class Queue {
   	private:
-			celula *cabeca;
-			celula *fim;
-		
+		celula *cabeca;
+		celula *fim;	
 	public:
-
 		Queue();
 		~Queue();
 		void insere(aviao *objeto);
@@ -89,7 +87,7 @@ class Queue {
 		aviao *fimDaFila();
 		bool filaVazia();
 		void printaFila();
-		Queue detectaExcecoes(Queue urgencia, int instante);
+		void detectaExcecoes(Queue *urgencia, int instante);
         void obtemTempo(int instanteAtual, informacoes *dados);
         void obtemCombustivel(informacoes *dados);
         void atualizaCombustivel();
@@ -103,7 +101,7 @@ Queue::Queue(): cabeca(new celula[1]), fim(cabeca) {
 
 Queue::~Queue() {
 	celula *aux;
-	for (; cabeca != nullptr; cabeca = aux){
+	for (; cabeca != nullptr; cabeca = aux) {
 		aux = cabeca->proximo;
 		delete [] cabeca;
 	}
@@ -173,7 +171,7 @@ void Queue::printaFila() {
 
 }
 
-Queue Queue::detectaExcecoes(Queue urgencia, int instante) {
+void Queue::detectaExcecoes(Queue *urgencia, int instante) {
 	celula *atual, *aux, *aux2;
 	aviao *objeto;
 	int tempo;
@@ -187,24 +185,23 @@ Queue Queue::detectaExcecoes(Queue urgencia, int instante) {
 				aux2  = atual->anterior;
 				if (atual->proximo != nullptr) atual->proximo->anterior = atual->anterior;
 				else fim = aux2;
-				urgencia.insere(objeto);
+				urgencia->insere(objeto);
 				delete [] atual;
 				atual = aux2;
 			}
-			else if (objeto->pousar && objeto->combustivel - tempo < 2){
+			else if (objeto->pousar && objeto->combustivel < 2) {
 				aux = atual->proximo;
 				atual->anterior->proximo = aux;
 				aux2  = atual->anterior;
 				if (atual->proximo != nullptr) atual->proximo->anterior = atual->anterior;
 				else fim = aux2;
-				urgencia.insere(objeto);
+				urgencia->insere(objeto);
 				delete [] atual;
 				atual = aux2;
 			}
 			else atual = atual->anterior;
 		}
 	}
-	return urgencia;
 }
 
 void Queue::obtemTempo(int instanteAtual, informacoes *dados) {
@@ -261,7 +258,7 @@ void desviaAviao(aviao *objeto) {
     delete [] objeto;
 }
 
-void pousaAviao(aviao *objeto, int l, int pistas[3], informacoes *dados){
+void pousaAviao(aviao *objeto, int l, int pistas[3], informacoes *dados) {
     pistas[l] = 3;
     cout << "O seguinte avião está pousando na pista " << l + 1 << endl;
     objeto->printa();
@@ -279,21 +276,21 @@ void decolaAviao(aviao *objeto, int l, int pistas[3], informacoes *dados) {
     delete [] objeto;
 }
 
-void aloca(int modo, Queue fila, Queue auxiliar, int pistas[3], informacoes *dados) {
+void aloca(int modo, Queue *fila, Queue *auxiliar, int pistas[3], informacoes *dados) {
     int l;
-    while (!fila.filaVazia()) {
-        if (fila.fimDaFila()->pousar) {
+    while (!fila->filaVazia()) {
+        if (fila->fimDaFila()->pousar) {
             for (l = 0; l < 2; l++) {
                 if (pistas[l] == 0) {
-                    pousaAviao(fila.retira(), l, pistas, dados);
+                    pousaAviao(fila->retira(), l, pistas, dados);
                     break;
                 } 
             }
             if (l == 2) {
-                if (modo == 0 && pistas[l] == 0) pousaAviao(fila.retira(), l, pistas, dados);
-                else if (modo != 2) desviaAviao(fila.retira());
+                if (modo == 0 && pistas[l] == 0) pousaAviao(fila->retira(), l, pistas, dados);
+                else if (modo != 2) desviaAviao(fila->retira());
                 else {
-                    if (pistas[2] == 0) auxiliar.insereNoFim(fila.retira());
+                    if (pistas[2] == 0) auxiliar->insereNoFim(fila->retira());
                     else break;
                 }
             }
@@ -301,28 +298,31 @@ void aloca(int modo, Queue fila, Queue auxiliar, int pistas[3], informacoes *dad
         else {
             for (l = 2; l >= 0; l--) {
                 if (pistas[l] == 0) {
-                    decolaAviao(fila.retira(), l, pistas, dados);
+                    decolaAviao(fila->retira(), l, pistas, dados);
                     break;
                 }
             }
             if (l == -1) {
                 if (modo == 2) break /*código para parar iteração*/;
                 else {
-                    auxiliar.insereNoFim(fila.retira());
+                    auxiliar->insereNoFim(fila->retira());
                 }
             }
         }
     }
-    while (!auxiliar.filaVazia()) fila.insereNoFim(auxiliar.retira());
-    
+    while (!auxiliar->filaVazia()) fila->insereNoFim(auxiliar->retira());
 }
 
 int main() {
-    Queue fila, urgencia, emergencia, auxiliar;
+    Queue *fila, *urgencia, *emergencia, *auxiliar;
     aviao *objeto;
     informacoes *dados = new informacoes[1];
     int i, j, pista[3] = {0,0,0}, n; 
     bool arquivo;
+    fila = new Queue[1];
+    urgencia = new Queue[1];
+    emergencia = new Queue[1];
+    auxiliar = new Queue[1];
     cout << "Digite 1 se deseja que o input seja um arquivo. Digite 0 caso contrário: ";
     cin >> arquivo;
     if (arquivo) {}
@@ -336,28 +336,32 @@ int main() {
         for (j = 0; j < n; j++) {
             objeto = new aviao[1];
             objeto->leia(arquivo, i);
-            if (objeto->emergencia) emergencia.insere(objeto);
-            else fila.insere(objeto);
+            if (objeto->emergencia) emergencia->insere(objeto);
+            else fila->insere(objeto);
         }
-        urgencia = fila.detectaExcecoes(urgencia, i);
+        fila->detectaExcecoes(urgencia, i);
         dados->zera();
-        emergencia.obtemTempo(i, dados);
-        urgencia.obtemTempo(i, dados);
-        fila.obtemTempo(i, dados);
+        emergencia->obtemTempo(i, dados);
+        urgencia->obtemTempo(i, dados);
+        fila->obtemTempo(i, dados);
         dados->zera();
         aloca(0, emergencia, auxiliar, pista, dados);
         aloca(1, urgencia, auxiliar, pista, dados);
         aloca(2, fila, auxiliar, pista, dados);
         dados->zera();
-        emergencia.obtemCombustivel(dados);
-        urgencia.obtemCombustivel(dados);
-        fila.obtemCombustivel(dados);
+        emergencia->obtemCombustivel(dados);
+        urgencia->obtemCombustivel(dados);
+        fila->obtemCombustivel(dados);
         
 
-        emergencia.atualizaCombustivel();
-        urgencia.atualizaCombustivel();
-        fila.atualizaCombustivel();
+        emergencia->atualizaCombustivel();
+        urgencia->atualizaCombustivel();
+        fila->atualizaCombustivel();
     }
+    delete [] dados;
+    delete [] fila;
+    delete [] emergencia;
+    delete [] urgencia;
     return 0;
 }
 
@@ -390,3 +394,4 @@ a quantidade média de combustível dos aviões esperando para pousar / depois d
 
 //mudar combustível, criar função que atualiza combustíveis, função que detecta exceções;
 //transformar tudo em ponteiro
+// deletar os ponteiros
