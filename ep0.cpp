@@ -344,6 +344,8 @@ int main() {
         emergencia->obtemTempo(i, dados);
         urgencia->obtemTempo(i, dados);
         fila->obtemTempo(i, dados);
+        cout << "Tempo médio de espera para pouso: " << ((double) dados->esperaPouso)/dados->numeroDeAvioesPousando << endl;
+        cout << "Tempo médio de espera para decolagem: " << ((double) dados->esperaDecolagem)/dados->numeroDeAvioesDecolando << endl;
         dados->zera();
         aloca(0, emergencia, auxiliar, pista, dados);
         aloca(1, urgencia, auxiliar, pista, dados);
