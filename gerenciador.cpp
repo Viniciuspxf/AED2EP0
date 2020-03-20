@@ -19,7 +19,7 @@ void pousaAviao(aviao *objeto, int l, int pistas[3], informacoes *dados) {
     pistas[l] = 3;
     cout << "Avião  ";
     objeto->printa();
-    cout << "pousa na pista " << l + 1;
+    cout << " pousa na pista " << l + 1;
     dados->numeroDeAvioesPousando++;
     dados->somaCombustiveis = dados->somaCombustiveis + objeto->combustivel;
     if (objeto->emergencia) { 
@@ -34,7 +34,7 @@ void decolaAviao(aviao *objeto, int l, int pistas[3], informacoes *dados) {
     pistas[l] = 3;
     cout << "Avião ";
     objeto->printa();
-    cout << "decola na pista " << l + 1;
+    cout << " decola na pista " << l + 1;
     if (objeto->emergencia) {
         dados->decolandoEmergencia++;
         cout << " (Emergência)";

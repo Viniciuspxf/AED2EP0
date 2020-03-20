@@ -1,0 +1,22 @@
+/*Há um caso de um avião ser de emergência mas ir parar em outra fila, tratar depois*/
+/*caso problema: urgencia sem espaço, ele volta pra fila, mas aí surgem outras emergências 
+em um instante posterior. (bagunçando a fila)
+
+solução: criar uma fila SÓ para emergências.
+
+*/
+//Tratar caso pousar, todas as pistas cheias exceto a terceira, com decolar atrás
+//usar fila auxiliar
+
+//urgência não é sinônimo de emergência
+
+
+/*
+Que aviões estão esperando para pousar e decolar / depois da alocação
+
+a quantidade média de combustível dos aviões esperando para pousar / depois da alocação
+*/
+
+//mudar combustível, criar função que atualiza combustíveis, função que detecta exceções;
+//transformar tudo em ponteiro
+// deletar os ponteiros
