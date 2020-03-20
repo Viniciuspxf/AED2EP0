@@ -1,7 +1,8 @@
 #include "aviao.h"
 #include <iostream>
 using namespace std;
-void aviao::leia(bool arquivo, int instante) {
+void aviao::leia(bool arquivo, int instanteAtual) {
+    instante = instanteAtual;
     if (arquivo) {
 
     }

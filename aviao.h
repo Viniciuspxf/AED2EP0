@@ -12,7 +12,7 @@ class aviao {
         int combustivel; //juntar combustivel e tempoestimado ????
         int tempoEstimado;
 		int instante;
-        void leia(bool arquivo, int instante);
+        void leia(bool arquivo, int instanteAtual);
         void printaDebugger();
         void printa();
 };
