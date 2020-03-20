@@ -49,6 +49,7 @@ aviao *Queue::retira() {
 		objeto = fim->conteudo;
 		aux = fim;
 		fim = fim->anterior;
+		fim->proximo = nullptr;
 		delete [] aux;
 		return objeto;
 	}
@@ -158,6 +159,6 @@ void Queue::obtemCombustivel(informacoes *dados) {
 void Queue::atualizaCombustivel() {
     celula *aux;
     for (aux = cabeca->proximo; aux != nullptr; aux = aux->proximo) {
-        aux->conteudo->combustivel--;
+        if (aux->conteudo->pousar) aux->conteudo->combustivel--;
     }
 }

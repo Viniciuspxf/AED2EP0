@@ -4,7 +4,6 @@
 class informacoes {
     public:
         void zera();
-        int tempoAtual;
         int decolandoEmergencia;
         int pousandoEmergencia;
         int somaCombustiveis;
