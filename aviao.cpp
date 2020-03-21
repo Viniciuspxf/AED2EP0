@@ -4,6 +4,16 @@ using namespace std;
 void aviao::leia(bool arquivo, int instanteAtual) {
     instante = instanteAtual;
     if (arquivo) {
+        cin >> nome;
+        cin >> pousar;
+        if (pousar) {
+            cin >> combustivel;
+        }
+        else {
+            cin >> tempoEstimado;
+        }
+        cin >> origemDestino;
+        cin >> emergencia;
 
     }
     else {

@@ -1,0 +1,3 @@
+#!/bin/bash
+make
+./ep0 < input/input.txt

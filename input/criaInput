@@ -1,0 +1,3 @@
+#!/bin/bash
+g++ gerador.cpp -o gerador
+./gerador > input.txt
